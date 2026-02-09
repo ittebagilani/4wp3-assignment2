@@ -1,79 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Information Form</title>
-    <link rel="stylesheet" href="/app/style.css">
+  <meta charset="UTF-8" />
+  <title>Movie Explorer</title>
+  <link rel="stylesheet" href="/app/styles.css" />
 </head>
 <body>
-    <div class="container">
-        <form action="/submit" method="POST" class="user-form">
-            <h1>User Information</h1>
-            <p class="subtitle">Please fill out the form below</p>
 
-            <div class="form-group">
-                <label for="first_name">First Name:</label>
-                <input type="text" id="first_name" name="first_name" placeholder="Enter your first name" required>
-            </div>
+  <header>
+    <h1>Movie M8</h1>
+    <p>Search and filter movies using real data</p>
+  </header>
 
-            <div class="form-group">
-                <label for="last_name">Last Name:</label>
-                <input type="text" id="last_name" name="last_name" placeholder="Enter your last name" required>
-            </div>
+  <main>
+    <form id="movieForm">
+      <input
+        type="text"
+        id="query"
+        placeholder="Movie title"
+        required
+      />
 
-            <div class="form-group">
-                <label for="dob">Date of Birth:</label>
-                <input type="date" id="dob" name="dob" required>
-            </div>
+      <select id="sort">
+        <option value="popularity.desc">Most Popular</option>
+        <option value="vote_average.desc">Highest Rated</option>
+        <option value="release_date.desc">Newest</option>
+      </select>
 
-            <div class="form-group">
-                <label for="gender">Gender:</label>
-                <select id="gender" name="gender" required>
-                    <option value="" disabled selected>Select your gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="non-binary">Non-binary</option>
-                    <option value="prefer-not-to-say">Prefer not to say</option>
-                </select>
-            </div>
+      <input
+        type="number"
+        id="rating"
+        placeholder="Min rating (0–10)"
+        min="0"
+        max="10"
+        step="0.1"
+      />
 
-            <div class="form-group">
-                <label>Favorite Days of the Week:</label>
-                <div class="checkbox-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" name="favorite_days" value="monday">
-                        <span>Monday</span>
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" name="favorite_days" value="tuesday">
-                        <span>Tuesday</span>
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" name="favorite_days" value="wednesday">
-                        <span>Wednesday</span>
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" name="favorite_days" value="thursday">
-                        <span>Thursday</span>
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" name="favorite_days" value="friday">
-                        <span>Friday</span>
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" name="favorite_days" value="saturday">
-                        <span>Saturday</span>
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" name="favorite_days" value="sunday">
-                        <span>Sunday</span>
-                    </label>
-                </div>
-            </div>
+      <input
+        type="number"
+        id="year"
+        placeholder="Release year"
+      />
 
-            <button type="submit" class="submit-btn">Submit</button>
-        </form>
-    </div>
+      <button type="submit">Search</button>
+    </form>
+
+    <section id="results">
+      <!-- Movie cards will be injected here -->
+    </section>
+  </main>
+
+  <script src="/app/script.js"></script>
 </body>
 </html>
