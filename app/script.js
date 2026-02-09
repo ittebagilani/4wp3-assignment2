@@ -34,6 +34,7 @@ function displayMovies(movies) {
     card.className = 'movie-card';
 
     card.innerHTML = `
+      ${movie.poster ? `<img src="${movie.poster}" alt="${movie.title}">` : ''}
       <h3>${movie.title}</h3>
       <p>⭐ ${movie.rating}</p>
       <p>${movie.releaseYear}</p>
