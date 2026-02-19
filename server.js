@@ -26,39 +26,40 @@ app.post('/api/movies', async (req, res) => {
     // ideally this is saved in a .env file but for an assignment its fine
     const apiKey = 'b3a40a7b7c1538e1c24361f4bc3c8fd2';
 
-    let apiURL = `https://api.themoviedb.org/3/search/movie` +
-      `?api_key=${apiKey}` +
-      `&query=${encodeURIComponent(query)}`;
-    if (year) {
-      apiURL += `&primary_release_year=${year}`;
+    // Use /discover for sorting, /search for text matching
+    let apiURL;
+
+    if (sort && sort !== 'popularity.desc') {
+      // Discover supports server-side sorting across thousands of results
+      apiURL = `https://api.themoviedb.org/3/discover/movie` +
+        `?api_key=${apiKey}` +
+        `&sort_by=${sort}` +
+        `&with_text_query=${encodeURIComponent(query)}`;
+      if (year) apiURL += `&primary_release_year=${year}`;
+      if (minRating) apiURL += `&vote_average.gte=${minRating}&vote_count.gte=50`;
+    } else {
+      // Default: search by title, sort by popularity locally
+      apiURL = `https://api.themoviedb.org/3/search/movie` +
+        `?api_key=${apiKey}` +
+        `&query=${encodeURIComponent(query)}`;
+      if (year) apiURL += `&primary_release_year=${year}`;
     }
 
     const response = await fetch(apiURL);
     const data = await response.json();
 
-    // processing
     let movies = data.results || [];
 
-    if (minRating) {
-      movies = movies.filter(
-        movie => movie.vote_average >= Number(minRating)
-      );
+    // Local minRating filter (only needed for the search path)
+    if (minRating && !apiURL.includes('vote_average.gte')) {
+      movies = movies.filter(movie => movie.vote_average >= Number(minRating));
     }
 
-    // sort based on the sort parameter
+    // Local sort fallback (only for the search/popularity path)
     if (sort === 'popularity.desc') {
       movies.sort((a, b) => b.popularity - a.popularity);
-    } else if (sort === 'vote_average.desc') {
-      movies.sort((a, b) => b.vote_average - a.vote_average);
-    } else if (sort === 'release_date.desc') {
-      movies.sort((a, b) => {
-        const dateA = a.release_date ? new Date(a.release_date) : new Date(0);
-        const dateB = b.release_date ? new Date(b.release_date) : new Date(0);
-        return dateB - dateA;
-      });
     }
 
-    // format
     const formattedMovies = movies.slice(0, 12).map(movie => ({
       title: movie.title,
       rating: movie.vote_average,
@@ -66,11 +67,11 @@ app.post('/api/movies', async (req, res) => {
       poster: movie.poster_path ? `https://image.tmdb.org/t/p/w300${movie.poster_path}` : null
     }));
 
-    res.json(formattedMovies)
+    res.json(formattedMovies);
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Failed to fetch movie info"});
+    res.status(500).json({ error: "Failed to fetch movie info" });
   }
 });
 
